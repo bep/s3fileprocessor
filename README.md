@@ -1,0 +1,3 @@
+[![Tests on Linux, MacOS and Windows](https://github.com/bep/s3fileprocessor/workflows/Test/badge.svg)](https://github.com/bep/s3fileprocessor/actions?query=workflow:Test)
+[![Go Report Card](https://goreportcard.com/badge/github.com/bep/s3fileprocessor)](https://goreportcard.com/report/github.com/bep/s3fileprocessor)
+[![GoDoc](https://godoc.org/github.com/bep/s3fileprocessor?status.svg)](https://godoc.org/github.com/bep/s3fileprocessor)
