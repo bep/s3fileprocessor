@@ -37,4 +37,11 @@ jobs:
     - name: Lint
       run: golint ./...
     - name: Test
+      env:
+        S3RPC_CLIENT_QUEUE: https://sqs.eu-north-1.amazonaws.com/656975317043/s3fptest_client
+        S3RPC_SERVER_QUEUE: https://sqs.eu-north-1.amazonaws.com/656975317043/s3fptest_server
+        S3RPC_CLIENT_ACCESS_KEY_ID: AKIAZR5WHZAZ6KZKRKWG
+        S3RPC_CLIENT_SECRET_ACCESS_KEY: ${{ secrets.S3RPC_CLIENT_SECRET_ACCESS_KEY }}
+        S3RPC_SERVER_ACCESS_KEY_ID: AKIAZR5WHZAZT55IVJWN
+        S3RPC_SERVER_SECRET_ACCESS_KEY: ${{ secrets.S3RPC_SERVER_SECRET_ACCESS_KEY }}
       run: go test -race ./...

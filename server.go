@@ -82,9 +82,9 @@ func (s *Server) Close() error {
 }
 
 // ListenAndServe listens for messages and processes them.
-// It blocks until the context is canceled or the server is closed.
-func (s *Server) ListenAndServe(ctx context.Context) error {
-	g, ctx := errgroup.WithContext(ctx)
+// It blocks until the server is closed.
+func (s *Server) ListenAndServe() error {
+	g, ctx := errgroup.WithContext(context.Background())
 	g.Go(func() error {
 		for {
 			select {

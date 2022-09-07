@@ -45,10 +45,10 @@ type common struct {
 	infof func(format string, args ...interface{})
 }
 
-func (r *common) Receive(ctx context.Context) ([]message, error) {
-	result, err := r.sqsClient.ReceiveMessage(ctx,
+func (c *common) Receive(ctx context.Context) ([]message, error) {
+	result, err := c.sqsClient.ReceiveMessage(ctx,
 		&sqs.ReceiveMessageInput{
-			QueueUrl:            aws.String(r.queue),
+			QueueUrl:            aws.String(c.queue),
 			MaxNumberOfMessages: 5,
 			VisibilityTimeout:   visibilitySeconds,
 			// Wait for 20 seconds for a message to arrive.

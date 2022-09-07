@@ -14,10 +14,6 @@ import (
 )
 
 func TestProcessFile(t *testing.T) {
-	if os.Getenv("CI") != "" {
-		// TODO(bep)
-		t.Skip("skipping test in CI")
-	}
 	c := qt.New(t)
 
 	infofc := func(format string, args ...interface{}) {
@@ -85,17 +81,17 @@ func TestProcessFile(t *testing.T) {
 	c.Assert(err, qt.IsNil)
 	c.Assert(server, qt.Not(qt.IsNil))
 
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	defer cancel()
-
 	go func() {
-		if err := server.ListenAndServe(ctx); err != nil {
+		if err := server.ListenAndServe(); err != nil {
 			panic(err)
 		}
 	}()
 
 	wd, err := os.Getwd()
 	c.Assert(err, qt.IsNil)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
 
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
@@ -129,7 +125,7 @@ func TestSetup(t *testing.T) {
 		t.Skip("Skipping in CI")
 	}
 
-	prov, err := NewProvisioner("s3fptest", defaultRegion)
+	prov, err := NewProvisioner("s3fpdev", defaultRegion) // s3fptest is used on GitHub
 	if err != nil {
 		t.Fatal(err)
 	}

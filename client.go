@@ -59,6 +59,7 @@ func NewClient(opts ClientOptions) (*Client, error) {
 
 }
 
+// Client is a client for executing operations on a server.
 type Client struct {
 	timeout time.Duration
 	*common
@@ -66,6 +67,7 @@ type Client struct {
 
 // ExecuteFilename executes the given op on a server with filename as its input.
 // This will block until the response is received or the timeout is reached.
+// Note that Output.Filename should be considered temporary and will be removed on Close.
 func (c *Client) ExecuteFilename(ctx context.Context, op, filename string) (Output, error) {
 	id := uuid.New().String()
 	key := fmt.Sprintf("%s/%s/%s_%s", toServer, op, id, filepath.Base(filename))
@@ -147,6 +149,7 @@ func (c *Client) ExecuteFilename(ctx context.Context, op, filename string) (Outp
 
 }
 
+// Close removes the temporary directory.
 func (c *Client) Close() error {
 	return os.RemoveAll(c.tempDir)
 }
