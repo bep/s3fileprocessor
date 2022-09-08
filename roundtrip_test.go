@@ -81,21 +81,21 @@ func TestProcessFile(t *testing.T) {
 	c.Assert(err, qt.IsNil)
 	c.Assert(server, qt.Not(qt.IsNil))
 
-	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
+	gServer, sctx := errgroup.WithContext(ctx)
+	gClient, cctx := errgroup.WithContext(ctx)
+
+	gServer.Go(func() error {
+		return server.ListenAndServe(sctx)
+	})
 
 	wd, err := os.Getwd()
 	c.Assert(err, qt.IsNil)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
-	defer cancel()
-
-	g, ctx := errgroup.WithContext(ctx)
-	g.Go(func() error {
-		res, err := client.ExecuteFilename(ctx, "dosomething", filepath.Join(wd, "go.mod"))
+	gClient.Go(func() error {
+		res, err := client.ExecuteFilename(cctx, "dosomething", filepath.Join(wd, "go.mod"))
 		if err != nil {
 			return err
 		}
@@ -114,10 +114,10 @@ func TestProcessFile(t *testing.T) {
 		return err
 	})
 
-	c.Assert(g.Wait(), qt.IsNil)
+	c.Assert(gClient.Wait(), qt.IsNil)
 	c.Assert(server.Close(), qt.IsNil)
+	c.Assert(gServer.Wait(), qt.IsNil)
 	c.Assert(client.Close(), qt.IsNil)
-
 }
 
 func TestSetup(t *testing.T) {

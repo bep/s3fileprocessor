@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -41,6 +42,8 @@ type common struct {
 
 	s3Client  *s3.Client
 	sqsClient *sqs.Client
+
+	closeOnce sync.Once
 
 	infof func(format string, args ...interface{})
 }

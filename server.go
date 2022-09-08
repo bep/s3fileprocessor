@@ -77,19 +77,23 @@ type Server struct {
 
 // Close closes the server.
 func (s *Server) Close() error {
-	close(s.quit)
-	return os.RemoveAll(s.tempDir)
+	var err error
+	s.closeOnce.Do(func() {
+		close(s.quit)
+		err = os.RemoveAll(s.tempDir)
+	})
+	return err
 }
 
 // ListenAndServe listens for messages and processes them.
 // It blocks until the server is closed.
-func (s *Server) ListenAndServe() error {
-	g, ctx := errgroup.WithContext(context.Background())
+func (s *Server) ListenAndServe(ctx context.Context) error {
+	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
 		for {
 			select {
 			case <-s.quit:
-				s.infof("quit")
+				s.infof("Closed")
 				return nil
 			case <-ctx.Done():
 				return nil

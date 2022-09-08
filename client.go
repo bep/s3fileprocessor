@@ -151,7 +151,11 @@ func (c *Client) ExecuteFilename(ctx context.Context, op, filename string) (Outp
 
 // Close removes the temporary directory.
 func (c *Client) Close() error {
-	return os.RemoveAll(c.tempDir)
+	var err error
+	c.closeOnce.Do(func() {
+		err = os.RemoveAll(c.tempDir)
+	})
+	return err
 }
 
 type ClientOptions struct {
