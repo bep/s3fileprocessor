@@ -64,8 +64,14 @@ type Output struct {
 	Metadata map[string]string
 }
 
+// Input is the input to a handler invocation.
+type Input struct {
+	Filename string
+	Metadata map[string]string
+}
+
 // Handlers is a map of operation names to handler functions.
-type Handlers map[string]func(ctx context.Context, filename string) (Output, error)
+type Handlers map[string]func(ctx context.Context, input Input) (Output, error)
 
 // Server is a server that processes files from an S3 bucket.
 type Server struct {
@@ -136,11 +142,12 @@ func (s *Server) ListenAndServe(ctx context.Context) error {
 						defer f.Close()
 						defer os.Remove(f.Name())
 
-						if _, err := s.getObject(ctx, f, m.Key); err != nil {
+						metaData, err := s.getObject(ctx, f, m.Key)
+						if err != nil {
 							return err
 						}
 
-						result, err := handle(ctx, f.Name())
+						result, err := handle(ctx, Input{Filename: f.Name(), Metadata: metaData})
 						if err != nil {
 							return fmt.Errorf("handle: %w", err)
 						}

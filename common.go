@@ -85,7 +85,7 @@ func (c *common) Receive(ctx context.Context) ([]message, error) {
 }
 
 func (c *common) deleteMessage(ctx context.Context, receiptHandle string) error {
-	c.infof("Delete message from %q", c.queue)
+	//c.infof("Delete message from %q", c.queue)
 	_, err := c.sqsClient.DeleteMessage(
 		ctx,
 		&sqs.DeleteMessageInput{
@@ -98,7 +98,7 @@ func (c *common) deleteMessage(ctx context.Context, receiptHandle string) error 
 }
 
 func (c *common) deleteObject(ctx context.Context, key string) error {
-	c.infof("Delete %s/%s", c.bucket, key)
+	//c.infof("Delete %s/%s", c.bucket, key)
 	_, err := c.s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(key),
@@ -107,7 +107,7 @@ func (c *common) deleteObject(ctx context.Context, key string) error {
 }
 
 func (c *common) getObject(ctx context.Context, f *os.File, key string) (map[string]string, error) {
-	c.infof("Get %s/%s", c.bucket, key)
+	c.infof("Downloading %s/%s", c.bucket, key)
 	o, err := c.s3Client.GetObject(
 		ctx,
 		&s3.GetObjectInput{

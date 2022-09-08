@@ -43,15 +43,15 @@ func TestProcessFile(t *testing.T) {
 	changedString := fmt.Sprintf("___changed__%d", time.Now().UnixNano())
 
 	handlers := Handlers{
-		"dosomething": func(ctx context.Context, filename string) (Output, error) {
-			infofs("dosomething: %s", filename)
-			b, err := os.ReadFile(filename)
+		"dosomething": func(ctx context.Context, input Input) (Output, error) {
+			infofs("dosomething: %s", input.Filename)
+			b, err := os.ReadFile(input.Filename)
 			if err != nil {
 				return Output{}, err
 			}
 			newContent := string(b) + "\n\n" + changedString
-			ext := filepath.Ext(filename)
-			newFilename := strings.TrimSuffix(filename, ext) + "-changed" + ext
+			ext := filepath.Ext(input.Filename)
+			newFilename := strings.TrimSuffix(input.Filename, ext) + "-changed" + ext
 			if err := os.WriteFile(newFilename, []byte(newContent), 0644); err != nil {
 				return Output{}, err
 			}
@@ -95,7 +95,7 @@ func TestProcessFile(t *testing.T) {
 	c.Assert(err, qt.IsNil)
 
 	gClient.Go(func() error {
-		res, err := client.ExecuteFilename(cctx, "dosomething", filepath.Join(wd, "go.mod"))
+		res, err := client.Execute(cctx, "dosomething", Input{Filename: filepath.Join(wd, "go.mod")})
 		if err != nil {
 			return err
 		}
