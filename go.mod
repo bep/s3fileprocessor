@@ -11,7 +11,7 @@ require (
 	github.com/bep/awscreate v0.1.0
 	github.com/bep/awscreate/s3rpccreate v0.2.0
 	github.com/frankban/quicktest v1.14.2
-	github.com/google/uuid v1.3.0
+	github.com/oklog/ulid/v2 v2.1.0
 	golang.org/x/sync v0.0.0-20220819030929-7fc1605a5dde
 )
 
