@@ -14,8 +14,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
+	"github.com/oklog/ulid/v2"
 
-	"github.com/google/uuid"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -69,7 +69,8 @@ type Client struct {
 // This will block until the response is received or the timeout is reached.
 // Note that Output.Filename should be considered temporary and will be removed on Close.
 func (c *Client) Execute(ctx context.Context, op string, input Input) (Output, error) {
-	id := uuid.New().String()
+	// ULID is case insensitive, and lower case works better for filenames.
+	id := strings.ToLower(ulid.Make().String())
 	key := fmt.Sprintf("%s/%s/%s_%s", toServer, op, id, filepath.Base(input.Filename))
 
 	// First upload the file to the input folder.
